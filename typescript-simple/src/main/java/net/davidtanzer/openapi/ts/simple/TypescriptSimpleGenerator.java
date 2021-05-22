@@ -1,4 +1,4 @@
-package net.davidtanzer.openapi.ts.oansnu;
+package net.davidtanzer.openapi.ts.simple;
 
 import org.openapitools.codegen.*;
 import io.swagger.models.properties.*;
@@ -31,7 +31,7 @@ public class TypescriptSimpleGenerator extends AbstractTypeScriptClientCodegen i
    * @return the friendly name for the generator
    */
   public String getName() {
-    return "typescript-oansnu";
+    return "typescript-simple";
   }
 
   /**
@@ -53,8 +53,8 @@ public class TypescriptSimpleGenerator extends AbstractTypeScriptClientCodegen i
     // iterate over the operation and perhaps modify something
     for(CodegenOperation co : opList){
       if(co.returnBaseType != null && co.returnBaseType.indexOf(" | ") >= 0) {
-        co.vendorExtensions.put("ts-oansnu-return-types", co.returnBaseType.split(" \\| "));
-        co.vendorExtensions.put("ts-oansnu-return-union", true);
+        co.vendorExtensions.put("ts-simple-return-types", co.returnBaseType.split(" \\| "));
+        co.vendorExtensions.put("ts-simple-return-union", true);
       }
       // example:
       // co.httpMethod = co.httpMethod.toLowerCase();
@@ -194,7 +194,7 @@ public class TypescriptSimpleGenerator extends AbstractTypeScriptClientCodegen i
    * @return A string value for the help message
    */
   public String getHelp() {
-    return "Generates a typescript-oansnu client library.";
+    return "Generates a typescript-simple client library.";
   }
 
   public TypescriptSimpleGenerator() {
@@ -208,7 +208,7 @@ public class TypescriptSimpleGenerator extends AbstractTypeScriptClientCodegen i
     typeMapping.put("set", "Array");
 
     // set the output folder here
-    outputFolder = "generated-code/typescript-oansnu";
+    outputFolder = "generated-code/typescript-simple";
 
     useOneOfInterfaces = true;
     legacyDiscriminatorBehavior = false;
@@ -241,7 +241,7 @@ public class TypescriptSimpleGenerator extends AbstractTypeScriptClientCodegen i
      * Template Location.  This is the location which templates will be read from.  The generator
      * will use the resource stream to attempt to read the templates.
      */
-    templateDir = "typescript-oansnu";
+    templateDir = "typescript-simple";
 
     /**
      * Api Package.  Optional, if needed, this can be used in templates

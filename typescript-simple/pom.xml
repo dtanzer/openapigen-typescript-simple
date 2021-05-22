@@ -2,9 +2,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.openapitools</groupId>
-    <artifactId>typescript-oansnu-openapi-generator</artifactId>
+    <artifactId>typescript-simple-openapi-generator</artifactId>
     <packaging>jar</packaging>
-    <name>typescript-oansnu-openapi-generator</name>
+    <name>typescript-simple-openapi-generator</name>
     <version>1.0.0</version>
     <build>
         <plugins>
