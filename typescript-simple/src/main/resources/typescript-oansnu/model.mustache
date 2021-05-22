@@ -1,0 +1,78 @@
+import { required } from './common'
+
+{{#models}}{{#model}}{{#imports}}import { {{.}}, {{.}}FromJson, {{.}}ArrayFromJson, } from './{{.}}'
+{{/imports}}
+
+{{#discriminator}}{{#mappedModels}}{{#-first}}export const All{{classname}}Values = [ {{#mappedModels}}'{{modelName}}', {{/mappedModels}}] as const
+export type {{classname}}Values = (typeof All{{classname}}Values)[number]
+
+export type {{classname}} = {{#mappedModels}}{{modelName}}{{^-last}} | {{/-last}}{{/mappedModels}}
+
+export function {{classname}}FromJson(json: Partial<{{classname}}>): {{classname}} {
+	const discriminator = required(json.{{propertyName}}, '{{propertyName}}')
+	switch(discriminator) {
+		{{#mappedModels}}
+		case '{{modelName}}': {
+			const model: Partial<{{modelName}}> = { ...json, {{propertyName}}: discriminator, }
+			return {{modelName}}FromJson(model)
+		}
+		{{/mappedModels}}
+	}
+}
+
+export function {{classname}}ArrayFromJson(json: any): {{classname}}[] {
+	if(Array.isArray(json)) {
+		const parsed: Partial<{{classname}}>[] = json
+
+		return parsed.map<{{classname}}>({{classname}}FromJson)
+	} else {
+		throw new Error(`Could not parse ${json} into Item[]`)
+	}
+}{{/-first}}{{/mappedModels}}{{^mappedModels}}export interface {{classname}} {
+{{#allVars}}
+	{{#isReadOnly}}readonly {{/isReadOnly}}{{name}}{{^required}}?{{/required}}: {{#isDiscriminator}}{{#parent}}'{{classname}}'{{/parent}}{{^parent}}{{#discriminator.mappedModels}}'{{modelName}}'{{^-last}} | {{/-last}}{{/discriminator.mappedModels}}{{/parent}}{{/isDiscriminator}}{{^isDiscriminator}}{{#isEnum}}{{{datatypeWithEnum}}}{{/isEnum}}{{^isEnum}}{{#isArray}}{{#items}}{{dataType}}{{/items}}[]{{/isArray}}{{^isArray}}{{dataType}}{{/isArray}}{{#isNullable}} | null{{/isNullable}}{{/isEnum}}{{/isDiscriminator}},
+{{/allVars}}
+}
+
+export function {{classname}}FromJson(json: Partial<{{classname}}>): {{classname}} {
+	{{#allVars}}{{#required}}const {{name}} = {{#isArray}}{{#items}}{{#isModel}}{{complexType}}ArrayFromJson({{/isModel}}{{/items}}{{/isArray}}{{^isArray}}{{#isModel}}{{dataType}}FromJson({{/isModel}}{{/isArray}}required(json.{{name}}, '{{name}}'){{#isModel}}){{/isModel}}{{#isArray}}{{#items}}{{#isModel}}){{/isModel}}{{/items}}{{/isArray}}
+	{{/required}}{{^required}}const {{name}} = json.{{name}}{{#isModel}}? {{dataType}}FromJson(json.{{name}}) : undefined{{/isModel}}{{#isArray}}{{#items}}{{#isModel}}? {{dataType}}ArrayFromJson(json.{{name}}) : undefined{{/isModel}}{{/items}}{{/isArray}}
+	{{/required}}{{/allVars}}
+	return {
+		{{#allVars}}{{name}}, {{/allVars}}
+	}
+}
+
+export function {{classname}}ArrayFromJson(json: any): {{classname}}[] {
+	if(Array.isArray(json)) {
+		const parsed: Partial<{{classname}}>[] = json
+
+		return parsed.map<{{classname}}>({{classname}}FromJson)
+	} else {
+		throw new Error(`Could not parse ${json} into Item[]`)
+	}
+}{{/mappedModels}}{{/discriminator}}{{^discriminator}}export interface {{classname}} {
+{{#allVars}}
+	{{#isReadOnly}}readonly {{/isReadOnly}}{{name}}{{^required}}?{{/required}}: {{#isDiscriminator}}{{#parent}}'{{classname}}'{{/parent}}{{^parent}}{{#discriminator.mappedModels}}'{{modelName}}'{{^-last}} | {{/-last}}{{/discriminator.mappedModels}}{{/parent}}{{/isDiscriminator}}{{^isDiscriminator}}{{#isEnum}}{{{datatypeWithEnum}}}{{/isEnum}}{{^isEnum}}{{#isArray}}{{#items}}{{dataType}}{{/items}}[]{{/isArray}}{{^isArray}}{{dataType}}{{/isArray}}{{#isNullable}} | null{{/isNullable}}{{/isEnum}}{{/isDiscriminator}},
+{{/allVars}}
+}
+
+export function {{classname}}FromJson(json: Partial<{{classname}}>): {{classname}} {
+	{{#allVars}}{{#required}}const {{name}} = {{#isArray}}{{#items}}{{#isModel}}{{complexType}}ArrayFromJson({{/isModel}}{{/items}}{{/isArray}}{{^isArray}}{{#isModel}}{{dataType}}FromJson({{/isModel}}{{/isArray}}required(json.{{name}}, '{{name}}'){{#isModel}}){{/isModel}}{{#isArray}}{{#items}}{{#isModel}}){{/isModel}}{{/items}}{{/isArray}}
+	{{/required}}{{^required}}const {{name}} = json.{{name}}{{#isModel}}? {{dataType}}FromJson(json.{{name}}) : undefined{{/isModel}}{{#isArray}}{{#items}}{{#isModel}}? {{dataType}}ArrayFromJson(json.{{name}}) : undefined{{/isModel}}{{/items}}{{/isArray}}
+	{{/required}}{{/allVars}}
+	return {
+		{{#allVars}}{{name}}, {{/allVars}}
+	}
+}
+
+export function {{classname}}ArrayFromJson(json: any): {{classname}}[] {
+	if(Array.isArray(json)) {
+		const parsed: Partial<{{classname}}>[] = json
+
+		return parsed.map<{{classname}}>({{classname}}FromJson)
+	} else {
+		throw new Error(`Could not parse ${json} into Item[]`)
+	}
+}{{/discriminator}}{{/model}}
+{{/models}}

@@ -1,0 +1,41 @@
+export function required<T>(value: T | undefined | null, name: string) {
+	if(value) {
+		return value
+	}
+	throw new Error(`Could not parse required value "${name}"`)
+}
+
+export function updateBearerToken(token: string) {
+	if(sessionStorage) {
+		sessionStorage.setItem('server_api.bearer_token', token)
+	}
+}
+
+export function removeBearerToken() {
+	if(sessionStorage) {
+		sessionStorage.removeItem('server_api.bearer_token')
+	}
+}
+
+export function getBearerToken(): string | null {
+	if(sessionStorage) {
+		return sessionStorage.getItem('server_api.bearer_token')
+	}
+	return null
+}
+
+export function setBackendUrl(backendUrl: string) {
+	if(sessionStorage) {
+		sessionStorage.setItem('server_api.backend_url', backendUrl)
+	}
+}
+
+export function getBackendUrl(): string {
+	if(sessionStorage) {
+		const backendUrl = sessionStorage.getItem('server_api.backend_url')
+		if(backendUrl !== null && backendUrl !== undefined) {
+			return backendUrl
+		}
+	}
+	return ''
+}

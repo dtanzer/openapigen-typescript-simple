@@ -1,0 +1,45 @@
+import { getBearerToken, getBackendUrl } from './common'
+
+{{#imports}}
+import { {{classname}}, {{classname}}FromJson, {{classname}}ArrayFromJson, } from './{{classname}}'
+{{/imports}}
+
+{{#operations}}
+{{#operation}}
+
+export async function {{operationId}}(
+	{{#allParams}}
+	{{paramName}}: {{dataType}},
+	{{/allParams}}
+): {{#returnType}}{{#isArray}}Promise<{{returnBaseType}}[]>{{/isArray}}{{^isArray}}Promise<{{returnBaseType}}>{{/isArray}}{{/returnType}}{{^returnType}}Promise<void>{{/returnType}} {
+	const headers: { [key: string]: string } = {
+		'Content-Type': 'application/json',
+	}
+	const bearerToken = getBearerToken()
+	if(bearerToken) {
+		headers['Authorization'] = 'Bearer ' + bearerToken
+	}
+
+	const response = await window.fetch(getBackendUrl() + `{{vendorExtensions.escapedPath}}`, {
+		method: '{{httpMethod}}',
+		headers,
+		{{#bodyParam}}body: JSON.stringify({{paramName}}){{/bodyParam}}
+	})
+
+	switch(response.status) { {{#responses}}{{#is4xx}}
+		case {{code}}: throw {{baseType}}FromJson(await response.json())
+{{/is4xx}}{{/responses}}
+		case 500: throw new Error('Internal Server Error')
+	}
+
+	{{^vendorExtensions.ts-oansnu-return-union}}{{#returnType}}{{#isArray}}return {{returnBaseType}}ArrayFromJson(await response.json())
+	{{/isArray}}{{^isArray}}return {{returnBaseType}}FromJson(await response.json()){{/isArray}}{{/returnType}}{{/vendorExtensions.ts-oansnu-return-union}}
+	{{#vendorExtensions.ts-oansnu-return-union}}const json = await response.json()
+	const type = json['type']
+	switch(type) {
+		{{#vendorExtensions.ts-oansnu-return-types}}case '{{.}}': return {{.}}FromJson(json)
+		{{/vendorExtensions.ts-oansnu-return-types}}default: throw new Error('cannot deserialize return of type "'+type+'" into "{{returnBaseType}}"')
+	}{{/vendorExtensions.ts-oansnu-return-union}}
+}
+{{/operation}}
+{{/operations}}
